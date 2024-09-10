@@ -24,19 +24,9 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess }) 
     setLoading(true);
     setError(null);
     try {
-      if (company) {
-        // Update existing company
-        console.log("values", values);
-        await axios.post(`${baseURL}/api/company/`, values, {
-          params: { apiKey },
-        });
-      } else {
-        // Add new company
-        await axios.post(`${baseURL}/api/company/`, values, {
-          params: { apiKey },
-        });
-      }
-
+      await axios.post(`${baseURL}/api/company/`, values, {
+        params: { apiKey },
+      });
       onSuccess();
     } catch (error: any) {
       setError(error.response?.data?.message || "An error occurred");

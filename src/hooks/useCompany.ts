@@ -1,5 +1,5 @@
 // src/hooks/useCompanies.ts
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { ApiResponse, Company, CompanyDetails } from "../types/company";
 
@@ -50,7 +50,14 @@ export const useCompanyDetails = (id: string) => {
 };
 
 export const useCompanyDelete = () => {
+  const queryClient = useQueryClient();
   return useMutation<string, Error, string>({
     mutationFn: deleteCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries(  {
+        queryKey: ['companies'],
+        refetchType: 'active',
+      })
+    }
   });
 };

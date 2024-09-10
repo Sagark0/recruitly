@@ -7,7 +7,7 @@ export const AddCompany: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSuccess = () => {
-    navigate('/'); // Redirect to company list page after success
+    navigate('/');
   };
 
   return (
