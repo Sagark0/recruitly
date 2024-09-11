@@ -1,38 +1,19 @@
-// src/components/CompanyForm.tsx
-import React, { useState } from "react";
 import { TextInput, Button, Group, Notification } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import axios from "axios";
 import { CompanyDetails } from "../types/company";
+import { useCompanyAdd } from "../hooks/useCompany";
 
 interface CompanyFormProps {
   company?: CompanyDetails;
-  onSuccess: () => void;
 }
 
-const apiKey = import.meta.env.VITE_API_KEY;
-const baseURL = import.meta.env.VITE_API_BASE_URL;
-
-export const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export const CompanyForm = ({ company }: CompanyFormProps) => {
   const form = useForm({
     initialValues: company,
   });
-
-  const handleSubmit = async (values: typeof form.values) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await axios.post(`${baseURL}/api/company/`, values, {
-        params: { apiKey },
-      });
-      onSuccess();
-    } catch (error: any) {
-      setError(error.response?.data?.message || "An error occurred");
-    } finally {
-      setLoading(false);
-    }
+  const { mutate, isError, isPending } = useCompanyAdd(company!);
+  const handleSubmit = (values: typeof form.values) => {
+    mutate(values);
   };
 
   return (
@@ -47,10 +28,10 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess }) 
       <TextInput label="Phone" placeholder="Phone" {...form.getInputProps("phone")} required />
       <TextInput label="Website" placeholder="Website" {...form.getInputProps("website")} />
 
-      {error && <Notification color="red">{error}</Notification>}
+      {isError && <Notification color="red">{isError}</Notification>}
 
       <Group mt="md">
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={isPending}>
           {company ? "Update Company" : "Add Company"}
         </Button>
       </Group>

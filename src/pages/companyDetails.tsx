@@ -1,4 +1,4 @@
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useCompanyDelete, useCompanyDetails } from "../hooks/useCompany";
 import { Button, Card, Flex, Paper, Text } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
@@ -6,25 +6,12 @@ import classes from "../styles/cardDetails.module.css";
 
 function CompanyDetails() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { data: company, error, isLoading } = useCompanyDetails(id!);
   const mutation = useCompanyDelete();
 
   if (!id) return <p>Invalid company ID.</p>;
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-
-  const handleDelete = () => {
-    mutation.mutate(id, {
-      onSuccess: () => {
-        console.log("Company deleted successfully");
-        navigate("/");
-      },
-      onError: (error) => {
-        console.error("Error deleting company:", error);
-      },
-    });
-  };
 
   const details = [
     { title: "Email", value: company?.email },
@@ -60,7 +47,7 @@ function CompanyDetails() {
           <Button
             variant="filled"
             color="red"
-            onClick={handleDelete}
+            onClick={() => mutation.mutate(id)}
             disabled={mutation.isPending}
             leftSection={<IconTrash size={14} />}
           >

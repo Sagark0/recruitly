@@ -1,6 +1,6 @@
 import { Card, Image, Text, Badge, Button, Flex } from "@mantine/core";
 import { Company } from "../types/company";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { useCompanyDelete } from "../hooks/useCompany";
 interface CompanyCardProps {
@@ -8,19 +8,7 @@ interface CompanyCardProps {
 }
 
 function CompanyCard({ company }: CompanyCardProps) {
-  const navigate = useNavigate();
   const mutation = useCompanyDelete();
-  const handleDelete = () => {
-    mutation.mutate(company.id, {
-      onSuccess: () => {
-        console.log("Company deleted successfully");
-        navigate("/");
-      },
-      onError: (error) => {
-        console.error("Error deleting company:", error);
-      },
-    });
-  };
 
   return (
     <Card
@@ -67,7 +55,7 @@ function CompanyCard({ company }: CompanyCardProps) {
           fullWidth
           mt="md"
           radius="md"
-          onClick={handleDelete}
+          onClick={() => mutation.mutate(company.id)}
           disabled={mutation.isPending}
         >
           {mutation.isPending ? "Deleting..." : "Delete"}
